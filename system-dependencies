@@ -1,0 +1,25 @@
+Debian packages:
+===============
+python3-pipenv
+xvfb
+chromium-driver
+libgirepository1.0-dev gstreamer1.0-rtsp libgstrtspserver-1.0-0 gir1.2-gstreamer-1.0 gir1.2-gst-rtsp-server-1.0
+i965-va-driver-shaders
+
+
+additional dependencies:
+========================
+for firfox support:
+
+wget -c  $(curl -sL https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.assets[].browser_download_url' | grep linux64) -O /tmp/geckodriver.tar.gz && \
+tar -C /opt -xzf /tmp/geckodriver.tar.gz && \
+chmod 755 /opt/geckodriver && \
+ln -fs /opt/geckodriver /usr/local/bin/geckodriver
+
+
+for raspi
+========================
+chromium - download armhf debian packages:
+https://packages.debian.org/chromium-common
+https://packages.debian.org/chromium
+https://packages.debian.org/chromium-driver

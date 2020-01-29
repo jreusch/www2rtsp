@@ -1,0 +1,10 @@
+# kill leftover browser instance
+
+ps auxw | grep firefox | grep marionette | grep tmp | awk '{ print $2 }' | xargs -n 1 pkill
+ps auxw | grep chromium | grep tmp | awk '{ print $2 }' | xargs -n 1 pkill
+
+# run inside pipenv
+pipenv run ./www2rtsp.sh "http://heise.de"
+
+
+mpv rtsp://localhost:8554/Stream1
