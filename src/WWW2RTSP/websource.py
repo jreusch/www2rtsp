@@ -4,8 +4,7 @@ import signal
 import sys
 from .screengrab_rtsp import ScreengrabConfig, create_mainloop, loop, \
     GstServer, ScreenGrabMediaFactory
-from .offscreen_browser import OffscreenBrowser, Browsers
-
+from .offscreen_browser import OffscreenBrowser, Browsers, OffscreenBrowserFactory
 
 description = """
 Open any given URL in an offscreen browser, grab it and stream it out via RTSP.
@@ -45,7 +44,10 @@ def process_args():
     parser.add_argument("-w", "--width", type=int, help="%(type)s: width of the browser window", default=1920)
     parser.add_argument("-h", "--height", type=int, help="%(type)s: height of the browser window", default=1080)
     parser.add_argument("-b", "--browser", type=Browsers, help="browser to use",  choices=list(Browsers), default=Browsers.CHROMIUM.value)
-    parser.add_argument("url", type=str, help="%(type)s: url of the site to open")
+
+    url_group = parser.add_mutually_exclusive_group(required=True)
+    url_group.add_argument("--dynamic", action='store_true', help="get url via rtsp request parameter")
+    url_group.add_argument("--url", type=str, help="%(type)s: url of predefined site to open")
 
     if len(sys.argv) < 2 or sys.argv[1] == "--help":
         parser.print_help()
@@ -56,15 +58,21 @@ def process_args():
 def main():
     global _offscreen_browser
     args = process_args()
-    _offscreen_browser = OffscreenBrowser(args.url, args.browser, args.width, args.height)
-    print("browser started on display: :{}".format(_offscreen_browser.display))
+
+    browser_factory = None
+    if not args.dynamic:
+        _offscreen_browser = OffscreenBrowser(args.url, args.browser, args.width, args.height)
+    else:
+        browser_factory = OffscreenBrowserFactory(args.browser, args.width, args.height)
+
     create_mainloop()
     rtsp_server = GstServer()
-    grab_opts = ScreengrabConfig(width=args.width, height=args.height, framerate=args.framerate)
+    grab_opts = ScreengrabConfig(width=args.width, height=args.height, framerate=args.framerate, dynamic_url=args.dynamic)
     print("starting screengrab")
     print("rtsp port:{} label:{}".format(rtsp_server.server.get_service(), args.rtsp_label))
+    print("url: rtsp://127.0.0.1:{port}/{label}".format(port=rtsp_server.server.get_service(), label=args.rtsp_label))
     print("grab config:", grab_opts)
-    stream = ScreenGrabMediaFactory(grab_opts)
+    stream = ScreenGrabMediaFactory(grab_opts, browser_factory)
     rtsp_server.attach_factory(stream, args.rtsp_label)
     loop()
 

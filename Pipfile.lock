@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "250ff5f2f41a20356bf9c39644eafbf730a17a6f8a287aa0fdc2f226d633b146"
+            "sha256": "810db769133f6d23f979008db242cd6059c3ae01eba0c15e156eb9d439ce8827"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -14,18 +14,26 @@
         ]
     },
     "default": {
+        "dotmap": {
+            "hashes": [
+                "sha256:3b7b764c3d70cfc3b505c9d2a318e0a3a2ce6c9125189566743cb86eaf382328",
+                "sha256:474eaae34456487baa49d91a85543158e834a150056796d49dd906e833e28db8"
+            ],
+            "index": "pypi",
+            "version": "==1.3.14"
+        },
         "pycairo": {
             "hashes": [
-                "sha256:4f5ba9374a46c98729dd3727d993f5e17ed0286fd6738ed464fe4efa0612d19c"
+                "sha256:2c143183280feb67f5beb4e543fd49990c28e7df427301ede04fc550d3562e84"
             ],
-            "version": "==1.19.0"
+            "version": "==1.19.1"
         },
         "pygobject": {
             "hashes": [
-                "sha256:2acb0daf2b3a23a90f52066cc23d1053339fee2f5f7f4275f8baa3704ae0c543"
+                "sha256:012a589aec687bfa809a1ff9f5cd775dc7f6fcec1a6bc7fe88e1002a68f8ba34"
             ],
             "index": "pypi",
-            "version": "==3.34.0"
+            "version": "==3.36.1"
         },
         "selenium": {
             "hashes": [
@@ -37,10 +45,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc",
-                "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"
+                "sha256:3018294ebefce6572a474f0604c2021e33b3fd8006ecd11d62107a5d2a963527",
+                "sha256:88206b0eb87e6d677d424843ac5209e3fb9d0190d0ee169599165ec25e9d9115"
             ],
-            "version": "==1.25.8"
+            "version": "==1.25.9"
         },
         "xvfbwrapper": {
             "hashes": [

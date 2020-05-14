@@ -12,6 +12,17 @@ class Browsers(Enum):
     def __str__(self):
         return self.value
 
+class OffscreenBrowserFactory():
+    def __init__(self, browser_choice: Browsers, default_width: int, default_height: int):
+        self.browser_choice = browser_choice
+        self.default_width = default_width
+        self.default_height = default_height
+
+    def open_browser(self, url, width = None, height = None):
+        width = self.default_width if width is None else width
+        height = self.default_height if height is None else height
+
+        return OffscreenBrowser(url, self.browser_choice, width, height)
 
 class OffscreenBrowser():
     _cleanup = []
@@ -23,6 +34,7 @@ class OffscreenBrowser():
         self.open_xvfb(width, height)
         self.open_browser(browser_choice, width, height)
         self.open_url(url)
+        print("browser started on display: :{}".format(self.display))
 
     def cleanup(self):
         while len(self._cleanup) != 0:

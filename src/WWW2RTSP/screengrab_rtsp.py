@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 import gi
 from collections import namedtuple
+from urllib.parse import parse_qs
+from dotmap import DotMap
+
+from WWW2RTSP.offscreen_browser import OffscreenBrowserFactory
 
 gi.require_version('Gst', '1.0')
 gi.require_version('GstRtspServer', '1.0')
@@ -13,7 +17,8 @@ DEFAULT_RTSP_LABEL = "Stream1"
 
 _ConfigFields = {"width": 1920,
                  "height": 1080,
-                 "framerate": 60}
+                 "framerate": 60,
+                 "dynamic_url": False}
 
 # with python 3.7+ both lines can be combined to
 #namedtuple('..', _ConfigFields.keys(), defaults=_ConfigFields.values())
@@ -32,19 +37,31 @@ def create_mainloop():
 
     __init = True
 
-
 class ScreenGrabMediaFactory(GstRtspServer.RTSPMediaFactory):
-    def __init__(self, grab_opts: ScreengrabConfig):
+    def __init__(self, grab_opts: ScreengrabConfig, browser_factory: OffscreenBrowserFactory = None):
         GstRtspServer.RTSPMediaFactory.__init__(self)
         self.grab_opts = grab_opts
+        self.browser_factory = browser_factory
+
+    def create_browser(self, qs):
+        if qs.url is None:
+            raise KeyError("URL missing")
+        self.browser_factory.open_browser(qs.url[0], self.grab_opts.width, self.grab_opts.height)
 
     def do_create_element(self, url):
+        qs = DotMap(parse_qs(url.query), _dynamic=False)
+
+        if self.grab_opts.dynamic_url:
+            print("dynamic url option enabled, creating browser on demand", qs.url[0])
+            self.create_browser(qs)
+
         # s_src = "v4l2src ! video/x-raw,rate=30,width=320,height=240 ! videoconvert ! video/x-raw,format=I420"
         # s_src = "ximagesrc use-damage=0 ! video/x-raw,framerate=30/1 ! videoscale method=0 ! videoconvert"
         # s_h264 = "videoconvert ! vaapiencode_h264 bitrate=1000"
         # s_src = "videotestsrc ! video/x-raw,rate=30,width=320,height=240,format=I420"
         #s_src = "ximagesrc use-damage=1 show-pointer=0 ! video/x-raw,framerate={opt.framerate}/1,height={opt.height},width={opt.width} ! videoconvert".format(
         #    opt=self.grab_opts)
+        print(url.query)
         s_src = "ximagesrc use-damage=0 show-pointer=0 ! video/x-raw,framerate={opt.framerate}/1,height={opt.height},width={opt.width} ! videoconvert ! video/x-raw,format=I420 ".format(
             opt=self.grab_opts)
         #s_h264 = "x264enc tune=zerolatency"
