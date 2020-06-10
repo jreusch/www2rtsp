@@ -74,6 +74,7 @@ def get_chromium_options(width: int, height: int):
     options.add_argument("--noerrdialogs")
     options.add_argument("--incognito")
     options.add_argument("--window-size={},{}".format(width, height))
+    options.add_experimental_option("excludeSwitches", ['enable-automation'])
     return options
 
 # only used for dev purposes
